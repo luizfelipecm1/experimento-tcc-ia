@@ -252,3 +252,47 @@ Amostragem não-probabilística por conveniência (utilização da base históri
 ### 7.2 Fluxograma do Experimento
 
 
+
+
+### 7.3 Protocolo Operacional (Passo a Passo)
+
+Para garantir a reprodutibilidade do experimento, será seguido o seguinte roteiro:
+
+1.  **Ingestão de Dados:** Leitura dos arquivos `.csv` contendo o histórico de vendas.
+2.  **Pré-processamento:**
+    * Remoção de registros inválidos (devoluções/valores negativos).
+    * Agrupamento dos dados por `[Data, Segmento]`.
+    * Tratamento de *missing values* (interpolação linear se necessário).
+3.  **Engenharia de Features:** * Criação de variáveis temporais (mês, trimestre, ano).
+    * Criação de variáveis de defasagem (*lags*) para os modelos de ML.
+4.  **Treinamento (Fase de Ajuste):**
+    * Otimização dos parâmetros do ARIMA (p,d,q) via *GridSearch*.
+    * Treinamento do Random Forest e do Prophet utilizando a base de treino (2019-2023).
+5.  **Inferência (Previsão):** Geração de previsões para os 12 meses da base de teste (2024), sem que o modelo "veja" os dados reais.
+6.  **Coleta de Dados:** Armazenamento dos resultados em uma tabela consolidada contendo: `[Data, Segmento, Modelo, Valor_Real, Valor_Previsto, Erro_Absoluto]`.
+
+### 7.4 Plano de Análise de Dados (Pré-execução)
+
+A análise estatística dos resultados seguirá as etapas abaixo para validar as três hipóteses principais:
+
+**Passo 1: Verificação de Normalidade**
+* Aplicar o **Teste de Shapiro-Wilk** nos resíduos (erros) de cada modelo para definir se usaremos testes paramétricos ou não-paramétricos.
+
+**Passo 2: Teste da Hipótese 1 (IA vs Estatística)**
+* Comparar a distribuição dos erros absolutos do ARIMA *versus* Prophet/Random Forest.
+* *Teste Estatístico:* **Teste de Wilcoxon Signed-Rank** (caso os erros não sejam normais) ou **Teste T Pareado**.
+* *Critério:* Se p-valor < 0.05, rejeita-se H0, confirmando que há diferença significativa de desempenho.
+
+**Passo 3: Teste da Hipótese 2 (Segmentação)**
+* Comparar o MAPE global da "soma das previsões segmentadas" *versus* o MAPE da "previsão única agregada".
+* Análise descritiva da redução percentual do erro.
+
+**Passo 4: Teste da Hipótese 3 (Sazonalidade)**
+* Comparar as amplitudes sazonais (diferença pico-vale) entre os segmentos.
+* *Teste Estatístico:* **Teste de Kruskal-Wallis** para verificar se as medianas de sazonalidade diferem entre os grupos (Indústria, Varejo, Agro).
+
+**Passo 5: Avaliação Visual e Prática**
+* Plotagem de gráficos de linha (Série Real vs. Prevista) para inspeção visual do ajuste.
+* Tabela final de ranking dos modelos por segmento baseada no RMSE.
+
+
