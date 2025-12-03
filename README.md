@@ -157,4 +157,98 @@ Avaliar a eficácia de modelos estatísticos e de IA na identificação e previs
 | M9 | Teste de Wilcoxon | Teste estatístico de diferença de medianas | estatístico / p-value |
 | M10 | MAPE | Erro percentual absoluto médio | % |
 
+## 4. Modelo Conceitual e Hipóteses
+
+### 4.1 Modelo Conceitual
+O experimento se baseia em uma estrutura de **Entrada-Processamento-Saída**:
+
+1.  **Entrada:** Séries temporais históricas de vendas de arames divididas por segmentos (dados brutos).
+2.  **Processamento:** Aplicação de tratamentos algorítmicos distintos:
+    * Modelos Estatísticos Clássicos (Baseline).
+    * Modelos de Machine Learning (Regressores).
+    * Modelos de Séries Temporais Modernos (Prophet).
+3.  **Saída:** Previsões de demanda futura e métricas de erro calculadas sobre uma base de teste oculta.
+
+### 4.2 Hipóteses do Experimento
+
+**H1 (Desempenho da IA vs Estatística)**
+* **H0:** Não há diferença estatisticamente significativa entre a acurácia (RMSE) dos modelos estatísticos tradicionais e dos modelos de IA.
+* **H1:** Os modelos de IA apresentam menor erro de previsão (RMSE) do que os modelos estatísticos tradicionais.
+
+**H2 (Impacto da Segmentação)**
+* **H0:** A modelagem agregada (empresa toda) possui o mesmo desempenho (MAPE) que a soma das modelagens segmentadas.
+* **H1:** A modelagem individual por segmento resulta em um erro percentual (MAPE) menor do que a modelagem agregada.
+
+**H3 (Sazonalidade)**
+* **H0:** A intensidade da sazonalidade é uniforme entre todos os segmentos de arames.
+* **H1:** Existem diferenças estatisticamente significativas na amplitude sazonal entre os diferentes segmentos.
+
+---
+
+## 5. Variáveis, Fatores e Tratamentos
+
+### 5.1 Variáveis do Estudo
+
+| Tipo de Variável | Nome da Variável | Descrição | Escala/Unidade |
+| :--- | :--- | :--- | :--- |
+| **Dependente** | Erro Médio Absoluto (MAE) | Média da diferença absoluta entre valor previsto e real. | Numérica (Kg ou R$) |
+| **Dependente** | RMSE | Raiz do Erro Quadrático Médio (penaliza grandes erros). | Numérica (Kg ou R$) |
+| **Dependente** | MAPE | Erro Percentual Absoluto Médio. | Percentual (%) |
+| **Dependente** | Amplitude Sazonal | Diferença entre o pico e o vale do ciclo sazonal. | Numérica |
+| **Independente** | Tipo de Modelo | A técnica utilizada para realizar a previsão. | Nominal (Categórica) |
+| **Independente** | Segmento de Produto | Categoria do arame (Indústria, Agro, Varejo). | Nominal (Categórica) |
+| **Controle** | Janela de Treinamento | Período dos dados usados para treinar (ex: 2019-2023). | Temporal |
+| **Controle** | Horizonte de Previsão | Quantidade de meses a prever (ex: 12 meses). | Numérica |
+
+### 5.2 Fatores e Tratamentos
+O experimento utiliza um **Desenho Fatorial Completo** (3 Técnicas x 3 Segmentos).
+
+**Fator A: Técnica de Previsão**
+* **A1:** Modelo Estatístico (ARIMA/Holt-Winters) - *Baseline*
+* **A2:** Modelo de ML (Random Forest Regressor)
+* **A3:** Modelo Híbrido/Facebook (Prophet)
+
+**Fator B: Segmento de Mercado**
+* **B1:** Indústria
+* **B2:** Varejo/Construção
+* **B3:** Agro
+
+### 5.3 Tabela de Combinações (Execuções)
+
+| ID Execução | Combinação | Descrição |
+| :--- | :--- | :--- |
+| E1 | A1 + B1 | ARIMA no segmento Indústria |
+| E2 | A2 + B1 | Random Forest no segmento Indústria |
+| E3 | A3 + B1 | Prophet no segmento Indústria |
+| E4 | A1 + B2 | ARIMA no segmento Varejo |
+| E5 | A2 + B2 | Random Forest no segmento Varejo |
+| E6 | A3 + B2 | Prophet no segmento Varejo |
+| E7 | A1 + B3 | ARIMA no segmento Agro |
+| E8 | A2 + B3 | Random Forest no segmento Agro |
+| E9 | A3 + B3 | Prophet no segmento Agro |
+
+---
+
+## 6. População, Sujeitos e Amostragem
+
+### 6.1 População e Amostra
+* **População:** Histórico completo de transações de vendas da empresa.
+* **Amostra:** Dados agregados mensalmente de **Jan/2019 a Dez/2024**.
+    * *Treino:* Jan/2019 a Dez/2023.
+    * *Teste:* Jan/2024 a Dez/2024.
+
+### 6.2 Técnica de Amostragem
+Amostragem não-probabilística por conveniência (utilização da base histórica disponível), com divisão temporal estrita para evitar *data leakage* (vazamento de dados futuros no treino).
+
+---
+
+## 7. Instrumentação e Protocolo Operacional
+
+### 7.1 Stack Tecnológico
+* **Linguagem:** Python 3.9+
+* **Ambiente:** Jupyter Notebook
+* **Bibliotecas:** Pandas (ETL), Statsmodels (ARIMA), Scikit-Learn (Random Forest, Metrics), Prophet, Seaborn (Visualização).
+
+### 7.2 Fluxograma do Experimento
+
 
