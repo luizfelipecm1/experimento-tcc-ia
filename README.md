@@ -251,7 +251,7 @@ Amostragem não-probabilística por conveniência (utilização da base históri
 
 ### 7.2 Fluxograma do Experimento
 
-
+![Fluxograma](fluxograma.png)
 
 
 ### 7.3 Protocolo Operacional (Passo a Passo)
