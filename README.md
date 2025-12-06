@@ -295,4 +295,27 @@ A análise estatística dos resultados seguirá as etapas abaixo para validar as
 * Plotagem de gráficos de linha (Série Real vs. Prevista) para inspeção visual do ajuste.
 * Tabela final de ranking dos modelos por segmento baseada no RMSE.
 
+## 8. Avaliação de Validade
+
+A validade do experimento determina o grau de confiança que podemos ter nos resultados (interna) e a capacidade de generalizá-los (externa).
+
+### 8.1 Validade Interna
+*Refere-se à certeza de que o tratamento (modelo de previsão) é a causa real do resultado observado (erro de previsão), e não fatores externos, erros de execução ou "sorte".*
+
+| Ameaça | Descrição no Contexto do Experimento | Estratégia de Mitigação |
+| :--- | :--- | :--- |
+| **Vazamento de Dados (Data Leakage)** | O risco de o modelo ter acesso acidental a informações de 2024 durante o treinamento, o que geraria métricas de acurácia artificialmente altas. | **Divisão Temporal Estrita:** Garantia via código de que o conjunto de treino (2019-2023) é separado cronologicamente do conjunto de teste (2024), sem janelas deslizantes aleatórias que misturem futuro e passado. |
+| **História / Eventos Exógenos** | Eventos atípicos que afetam a série temporal (ex: Pandemia de COVID-19 em 2020/21) e podem distorcer o aprendizado do padrão "normal" de sazonalidade. | **Análise de Robustez:** Testar os modelos com e sem o período crítico da pandemia ou utilizar variáveis binárias (*dummy vars*) para sinalizar esses períodos, permitindo que o modelo isole o efeito anômalo. |
+| **Maturação dos Dados** | Mudanças na forma como a empresa registra as vendas ao longo dos anos (ex: reclassificação de produtos ou mudança de sistema ERP). | **Pré-processamento e Normalização:** Verificação da consistência das categorias de produtos e segmentos em todo o histórico antes da ingestão nos modelos. |
+| **Instrumentação** | Erros na implementação dos cálculos de erro (bugs no código Python). | **Uso de Bibliotecas Padrão:** Utilização de funções validadas do *Scikit-Learn* (`mean_absolute_error`, `rmse`) em vez de reimplementar fórmulas matemáticas manualmente. |
+
+### 8.2 Validade Externa
+*Refere-se à capacidade de generalizar os resultados deste experimento para outros contextos (outras empresas, outros períodos ou outros produtos).*
+
+| Ameaça | Descrição no Contexto do Experimento | Estratégia de Mitigação |
+| :--- | :--- | :--- |
+| **Representatividade da Amostra** | O experimento utiliza dados de apenas uma empresa de arames. Os resultados podem não se aplicar a todo o setor metalúrgico ou siderúrgico. | **Delimitação de Escopo:** O trabalho assume que a solução é específica para o contexto da empresa parceira. A generalização reivindicada é sobre a **metodologia** de comparação (GQM + Experimentação), e não sobre os hiperparâmetros específicos dos modelos. |
+| **Validade Temporal** | Um modelo treinado hoje pode perder validade no futuro se houver mudanças estruturais no mercado (ex: entrada de novos concorrentes ou novas tecnologias). | **Protocolo de Retreino:** A proposta final incluirá uma recomendação de *retreino periódico* (ex: trimestral) dos modelos com dados novos para manter a aderência à realidade do mercado. |
+| **Especificidade dos Segmentos** | Os segmentos analisados (Indústria, Agro, Varejo) podem ter comportamentos cíclicos muito específicos que não se repetem em outros nichos de mercado. | **Diversidade de Testes:** A escolha proposital de 3 segmentos com dinâmicas diferentes (Agro depende de safra, Indústria depende de PIB) serve para testar se os modelos conseguem generalizar o aprendizado para diferentes tipos de sazonalidade. |
+
 
