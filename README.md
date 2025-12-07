@@ -1,3 +1,5 @@
+[Link do vídeo](https://youtu.be/y3cEBz_s48w)
+
 # 📘 Plano de Experimento – Entrega 1
 ### Tema: Análise estatística e modelagem de sazonalidade de vendas em múltiplos segmentos de uma empresa de arames utilizando técnicas de Inteligência Artificial
 
